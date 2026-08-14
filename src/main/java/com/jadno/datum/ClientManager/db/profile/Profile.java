@@ -1,12 +1,12 @@
-package com.jadno.datum.ClientManager.db.user;
+package com.jadno.datum.ClientManager.db.profile;
 
 import jakarta.persistence.*;
 
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "profile")
+public class Profile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class User {
     @Column(name = "role")
     private Set<String> roles;
 
-    public User(String username, String password, boolean enabled, Set<String> roles) {
+    public Profile(String username, String password, boolean enabled, Set<String> roles) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
@@ -48,7 +48,7 @@ public class User {
         return roles;
     }
 
-    public static UserBuilder builder() {
-        return new UserBuilder();
+    public static ProfileBuilder builder() {
+        return new ProfileBuilder();
     }
 }

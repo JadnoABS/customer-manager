@@ -26,6 +26,13 @@ spring:
       enabled: true
       path: /h2-console
 
+  # -------------- Credencias de Perfil --------------
+  profiles:
+    admin:
+      password: admin123
+    user:
+      password: user123
+
   # Timeouts aplicados ao RestClient.Builder auto-configurado (starter spring-boot-starter-restclient)
   http:
     client:

@@ -1,8 +1,9 @@
 package com.jadno.datum.ClientManager.config;
 
-import com.jadno.datum.ClientManager.db.user.User;
-import com.jadno.datum.ClientManager.db.user.UserRepository;
+import com.jadno.datum.ClientManager.db.profile.Profile;
+import com.jadno.datum.ClientManager.db.profile.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,23 +15,29 @@ import java.util.Set;
 public class DataInitializer {
 
     @Autowired
-    private UserRepository userRepository;
+    private ProfileRepository profileRepository;
+
+    @Value("${profiles.admin.password}")
+    private String adminPassword;
+
+    @Value("${profiles.user.password}")
+    private String userPassword;
 
     @Bean
-    public CommandLineRunner initUsers(UserRepository repository, PasswordEncoder encoder) {
+    public CommandLineRunner initUsers(ProfileRepository repository, PasswordEncoder encoder) {
         return args -> {
-            if (userRepository.findByUsername("ADMIN").isEmpty()) {
-                userRepository.save(User.builder()
+            if (profileRepository.findByUsername("ADMIN").isEmpty()) {
+                profileRepository.save(Profile.builder()
                     .username("ADMIN")
-                    .password(encoder.encode("admin123"))
+                    .password(encoder.encode(adminPassword))
                     .enabled(true)
                     .roles(Set.of("ADMIN", "USER"))
                     .build());
             }
-            if (userRepository.findByUsername("USER").isEmpty()) {
-                userRepository.save(User.builder()
+            if (profileRepository.findByUsername("USER").isEmpty()) {
+                profileRepository.save(Profile.builder()
                     .username("USER")
-                    .password(encoder.encode("user123"))
+                    .password(encoder.encode(userPassword))
                     .enabled(true)
                     .roles(Set.of("USER"))
                     .build());

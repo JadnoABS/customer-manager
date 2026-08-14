@@ -1,7 +1,7 @@
 package com.jadno.datum.ClientManager.security;
 
-import com.jadno.datum.ClientManager.db.user.User;
-import com.jadno.datum.ClientManager.db.user.UserRepository;
+import com.jadno.datum.ClientManager.db.profile.Profile;
+import com.jadno.datum.ClientManager.db.profile.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,21 +15,21 @@ import java.util.List;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private ProfileRepository profileRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + username));
+        Profile profile = profileRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Profile " + username + " not found!"));
 
-        List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
+        List<SimpleGrantedAuthority> authorities = profile.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .toList();
 
         return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .disabled(!user.isEnabled())
+                .username(profile.getUsername())
+                .password(profile.getPassword())
+                .disabled(!profile.isEnabled())
                 .authorities(authorities)
                 .build();
     }
