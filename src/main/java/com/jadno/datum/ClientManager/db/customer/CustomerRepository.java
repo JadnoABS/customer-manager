@@ -1,5 +1,6 @@
-package com.jadno.datum.ClientManager.db.costumer;
+package com.jadno.datum.ClientManager.db.customer;
 
+import com.jadno.datum.ClientManager.dto.Status;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,16 +10,16 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface CostumerRepository extends JpaRepository<Costumer, Long> {
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-    Optional<List<Costumer>> findByName(String name);
+    Optional<List<Customer>> findByName(String name);
 
-    Optional<List<Costumer>> findByStatus(String status);
+    Optional<List<Customer>> findByStatus(Status status);
 
     @Modifying
     @Transactional
     @Query(value = """
-            UPDATE client
+            UPDATE customer
             SET name = :name,
                 cpf = :cpf,
                 email = :email,
@@ -35,7 +36,7 @@ public interface CostumerRepository extends JpaRepository<Costumer, Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "DELETE FROM client WHERE id = :id", nativeQuery = true)
+    @Query(value = "DELETE FROM customer WHERE id = :id", nativeQuery = true)
     void deleteById(
             @Param("id") Long id
     );

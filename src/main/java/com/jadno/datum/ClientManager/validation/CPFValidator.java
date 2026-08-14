@@ -31,6 +31,6 @@ public class CPFValidator implements ConstraintValidator<CPF, String> {
         int rest = sum % 11;
         int expectedDigit = (rest < 2) ? 0 : 11 - rest;
 
-        return expectedDigit == Character.getNumericValue(cpf.charAt(expectedDigit));
+        return expectedDigit == Character.getNumericValue(cpf.charAt(digitPosition));
     }
 }

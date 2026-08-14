@@ -25,6 +25,9 @@ public class Profile {
     @Column(name = "role")
     private Set<String> roles;
 
+    protected Profile() {
+    }
+
     public Profile(String username, String password, boolean enabled, Set<String> roles) {
         this.username = username;
         this.password = password;

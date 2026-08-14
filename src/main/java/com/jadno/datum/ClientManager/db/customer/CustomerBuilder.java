@@ -1,36 +1,36 @@
-package com.jadno.datum.ClientManager.db.costumer;
+package com.jadno.datum.ClientManager.db.customer;
 
 import com.jadno.datum.ClientManager.dto.Status;
 
-public class CostumerBuilder {
+public class CustomerBuilder {
 
     private String name;
     private String cpf;
     private String email;
     private Status status = Status.ACTIVE;
 
-    public CostumerBuilder name(String name) {
+    public CustomerBuilder name(String name) {
         this.name = name;
         return this;
     }
 
-    public CostumerBuilder cpf(String cpf) {
+    public CustomerBuilder cpf(String cpf) {
         this.cpf = cpf;
         return this;
     }
 
-    public CostumerBuilder email(String email) {
+    public CustomerBuilder email(String email) {
         this.email = email;
         return this;
     }
 
-    public CostumerBuilder status(Status status) {
+    public CustomerBuilder status(Status status) {
         this.status = status;
         return this;
     }
 
-    public Costumer build() {
-        return new Costumer(name, cpf, email, status);
+    public Customer build() {
+        return new Customer(name, cpf, email, status);
     }
 
 }

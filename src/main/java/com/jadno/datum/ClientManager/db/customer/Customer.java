@@ -1,11 +1,11 @@
-package com.jadno.datum.ClientManager.db.costumer;
+package com.jadno.datum.ClientManager.db.customer;
 
 import com.jadno.datum.ClientManager.dto.Status;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "client")
-public class Costumer {
+@Table(name = "customer")
+public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,14 +24,18 @@ public class Costumer {
     @Column(nullable = false)
     private Status status;
 
-    protected Costumer() {
+    protected Customer() {
     }
 
-    public Costumer(String name, String cpf, String email, Status status) {
+    public Customer(String name, String cpf, String email, Status status) {
         this.name = name;
         this.cpf = cpf;
         this.email = email;
         this.status = status;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -50,7 +54,7 @@ public class Costumer {
         return status;
     }
 
-    public static CostumerBuilder builder() {
-        return new CostumerBuilder();
+    public static CustomerBuilder builder() {
+        return new CustomerBuilder();
     }
 }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class CostumerRequestDTO {
+public class CustomerRequestDTO {
 
     @NotBlank(message = "name field is required!")
     @Size(max = 30, message = "name field is 30 characters maximum")
@@ -21,10 +21,10 @@ public class CostumerRequestDTO {
 
     private Status status;
 
-    public CostumerRequestDTO() {
+    public CustomerRequestDTO() {
     }
 
-    public CostumerRequestDTO(String name, String cpf, String email, Status status) {
+    public CustomerRequestDTO(String name, String cpf, String email, Status status) {
         this.name = name;
         this.cpf = cpf;
         this.email = email;
