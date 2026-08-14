@@ -1,0 +1,13 @@
+services:
+  customer-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: customer-service
+    ports:
+      - "8080:8080"
+    environment:
+      EXTERNAL_API_BASE_URL: https://jsonplaceholder.typicode.com
+      # Descomente se o erro de cgroup aparecer mesmo em container:
+      # JAVA_TOOL_OPTIONS: "-XX:-UseContainerSupport"
+    restart: unless-stopped
