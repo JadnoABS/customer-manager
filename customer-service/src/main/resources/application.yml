@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: customer-manager
+
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.micrometer.metrics.autoconfigure.system.SystemMetricsAutoConfiguration
+
+  # ---------- H2 / JPA ----------
+  datasource:
+    url: jdbc:h2:mem:customerdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  # Timeouts aplicados ao RestClient.Builder auto-configurado (starter spring-boot-starter-restclient)
+  http:
+    client:
+      connect-timeout: 5s
+      read-timeout: 10s
+
+  # -------------- Credenciais de Perfil --------------
+profiles:
+  admin:
+    password: admin123
+  user:
+    password: user123
+
+# ---------- Cliente da API externa ----------
+score-api:
+  base-url: ${SCORE_SERVICE_BASE_URL}
+
+# ---------- Actuator / Prometheus ----------
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    com.jadno.datum.ClientManager: DEBUG

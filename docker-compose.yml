@@ -1,13 +1,116 @@
 services:
+
+  # ---------- Customer Service ----------
   customer-service:
     build:
-      context: .
+      context: ./customer-service
       dockerfile: Dockerfile
     container_name: customer-service
     ports:
       - "8080:8080"
-      - "5005:5005"
     environment:
-      EXTERNAL_API_BASE_URL: https://jsonplaceholder.typicode.com
-      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      SCORE_SERVICE_BASE_URL: http://score-service:8081
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      # JAVA_TOOL_OPTIONS: "-XX:-UseContainerSupport"
+    networks:
+      - public-net
+      - backend-net
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     restart: unless-stopped
+
+  # ---------- Score Service (fechado: sem porta publicada, só acessível via backend-net/cache-net) ----------
+  score-service:
+    build:
+      context: ./score-service
+      dockerfile: Dockerfile
+    container_name: score-service
+    environment:
+      SERVER_PORT: 8081
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+    networks:
+      - backend-net
+      - cache-net
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # ---------- RabbitMQ ----------
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    ports:
+      - "15672:15672" # UI de administração (dev only — remova em produção se não precisar)
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - backend-net
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  # ---------- Redis (só o score-service enxerga) ----------
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    networks:
+      - cache-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ---------- Prometheus ----------
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - public-net
+    depends_on:
+      - customer-service
+    restart: unless-stopped
+
+networks:
+  public-net:
+    driver: bridge
+  backend-net:
+    driver: bridge
+    internal: false # AMQP/HTTP interno entre as duas apps + rabbitmq
+  cache-net:
+    driver: bridge
+    internal: true  # sem saída para fora do host — reforça o isolamento do redis
