@@ -7,6 +7,7 @@ import com.jadno.datum.CustomerManager.db.customer.CustomerRepository;
 import com.jadno.datum.CustomerManager.dto.Status;
 import com.jadno.datum.CustomerManager.exception.CustomerNotFoundException;
 import com.jadno.datum.CustomerManager.exception.DAOException;
+import com.jadno.datum.CustomerManager.messaging.CustomerEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,9 @@ public class CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private CustomerEventPublisher customerEventPublisher;
 
     public CustomerResponseDTO create(CustomerRequestDTO customer) {
         Customer newCustomer;
@@ -32,7 +36,7 @@ public class CustomerService {
             throw new DAOException("Error on Customer entity creation!");
         }
 
-        // TODO: Enviar para a fila do rabbitmq
+        customerEventPublisher.publishCustomerCreated(newCustomer.getCpf());
 
         return toCustomerDTO(newCustomer);
     }

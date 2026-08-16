@@ -22,6 +22,13 @@ spring:
       enabled: true
       path: /h2-console
 
+  # ---------- Messageria -----------
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST}
+    port: ${SPRING_RABBITMQ_PORT}
+    username: ${SPRING_RABBITMQ_USERNAME}
+    password: ${SPRING_RABBITMQ_PASSWORD}
+
   # Timeouts aplicados ao RestClient.Builder auto-configurado (starter spring-boot-starter-restclient)
   http:
     client:
@@ -31,9 +38,9 @@ spring:
   # -------------- Credenciais de Perfil --------------
 profiles:
   admin:
-    password: admin123
+    password: ${ADMIN_PASSWORD}
   user:
-    password: user123
+    password: ${USER_PASSWORD}
 
 # ---------- Cliente da API externa ----------
 score-api:

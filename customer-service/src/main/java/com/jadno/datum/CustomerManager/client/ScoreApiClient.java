@@ -26,12 +26,12 @@ public class ScoreApiClient {
                     .retrieve()
                     .body(CustomerScoreDTO.class);
         } catch (RestClientResponseException ex) {
-            logger.warn("API externa retornou erro {} ao buscar recurso {}", ex.getStatusCode(), cpf);
+            logger.warn("Score API returned error status {} while trying to fetch CPF {}", ex.getStatusCode(), cpf);
             throw new ExternalServiceException(
-                    "Falha ao consultar a API externa (status " + ex.getStatusCode() + ")", ex);
+                    "Failed on requesting Score API (status " + ex.getStatusCode() + ")", ex);
         } catch (Exception ex) {
-            logger.error("Erro inesperado ao chamar API externa para o recurso {}", cpf, ex);
-            throw new ExternalServiceException("Erro de comunicação com a API externa", ex);
+            logger.error("Unexpected error while trying to request Score API for CPF {}", cpf, ex);
+            throw new ExternalServiceException("Communication error with Score API", ex);
         }
     }
 }

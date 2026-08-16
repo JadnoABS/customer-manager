@@ -14,7 +14,8 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
-      # JAVA_TOOL_OPTIONS: "-XX:-UseContainerSupport"
+      ADMIN_PASSWORD: admin123
+      USER_PASSWORD: user123
     networks:
       - public-net
       - backend-net
