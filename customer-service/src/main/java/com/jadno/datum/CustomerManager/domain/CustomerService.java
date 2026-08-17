@@ -6,6 +6,7 @@ import com.jadno.datum.CustomerManager.dto.CustomerResponseDTO;
 import com.jadno.datum.CustomerManager.db.customer.Customer;
 import com.jadno.datum.CustomerManager.db.customer.CustomerRepository;
 import com.jadno.datum.CustomerManager.dto.Status;
+import com.jadno.datum.CustomerManager.exception.BusinessException;
 import com.jadno.datum.CustomerManager.exception.CustomerNotFoundException;
 import com.jadno.datum.CustomerManager.exception.DAOException;
 import com.jadno.datum.CustomerManager.messaging.CustomerEventPublisher;
@@ -13,7 +14,6 @@ import com.jadno.datum.CustomerManager.monitoring.MetricService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,20 +32,29 @@ public class CustomerService {
     private MetricService metricService;
 
     public CustomerResponseDTO create(CustomerRequestDTO customer) {
+        String cpf = customer.getCpf().replaceAll("\\D", "");
+
+        if (customerRepository.findByCpf(cpf).isPresent()){
+            throw new BusinessException("CPF number already in use!");
+        }
+        if (customerRepository.findByEmail(customer.getEmail()).isPresent()){
+            throw new BusinessException("E-mail address already in use!");
+        }
+
         Customer newCustomer;
         try {
             newCustomer = customerRepository.save(Customer.builder()
                     .name(customer.getName())
-                    .cpf(customer.getCpf())
+                    .cpf(cpf)
                     .email(customer.getEmail())
                     .status(customer.getStatus())
                     .build());
         } catch (Exception e) {
             metricService.incrementCustomerCreateError();
-            throw new DAOException("Error on Customer creation! Email or Cpf may be already in use.");
+            throw new DAOException("Error on Customer creation! Please try again later.");
         }
 
-        customerEventPublisher.publishCustomerCreated(newCustomer.getCpf());
+        customerEventPublisher.publishCustomerCreatedEvent(newCustomer.getCpf());
         metricService.incrementCustomerCreateSuccess();
 
         return toCustomerDTO(newCustomer);
@@ -62,7 +71,7 @@ public class CustomerService {
         Customer updatedCustomer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer with id: " + customerId + " not found!"));
 
-        customerEventPublisher.publishCustomerCreated(updatedCustomer.getCpf());
+        customerEventPublisher.publishCustomerCreatedEvent(updatedCustomer.getCpf());
 
         return toCustomerDTO(updatedCustomer);
     }

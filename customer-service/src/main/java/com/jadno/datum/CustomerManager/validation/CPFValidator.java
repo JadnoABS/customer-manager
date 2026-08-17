@@ -8,7 +8,7 @@ public class CPFValidator implements ConstraintValidator<CPF, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null || value.isBlank()) {
-            return true;
+            return false;
         }
 
         String cpf = value.replaceAll("\\D", "");

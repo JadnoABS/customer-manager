@@ -4,6 +4,9 @@ import com.jadno.datum.ScoreService.db.Score;
 import com.jadno.datum.ScoreService.db.ScoreRepository;
 import com.jadno.datum.ScoreService.dto.Classification;
 import com.jadno.datum.ScoreService.dto.ScoreDTO;
+import com.jadno.datum.ScoreService.exception.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +16,13 @@ public class ScoreService {
     @Autowired
     private ScoreRepository scoreRepository;
 
+    private Logger log = LoggerFactory.getLogger(ScoreService.class);
+
     public ScoreDTO getCustomerScore(String cpf) {
         return toScoreDTO(
-            scoreRepository.findByCpf(cpf).orElseThrow(RuntimeException::new)
+            scoreRepository.findByCpf(cpf).orElseThrow(() -> new ResourceNotFoundException("Customer with CPF " + cpf + " not found!"))
         );
     }
-
 
     public void createScore(String cpf) {
         Long score = (long) (Math.random() * 1001);
@@ -32,7 +36,7 @@ public class ScoreService {
                 .build()
             );
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.warn("Error while saving customer score. Exception: {}", e.getMessage());
         }
     }
 

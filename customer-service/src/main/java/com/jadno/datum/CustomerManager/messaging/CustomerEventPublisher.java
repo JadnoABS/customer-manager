@@ -16,7 +16,7 @@ public class CustomerEventPublisher {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void publishCustomerCreated(String cpf) {
+    public void publishCustomerCreatedEvent(String cpf) {
         CustomerEvent event = CustomerEvent.of(cpf);
 
         rabbitTemplate.convertAndSend(

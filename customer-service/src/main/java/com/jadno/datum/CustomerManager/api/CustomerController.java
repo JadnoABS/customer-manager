@@ -8,6 +8,7 @@ import com.jadno.datum.CustomerManager.dto.CustomerResponseDTO;
 import com.jadno.datum.CustomerManager.dto.Status;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<CustomerResponseDTO> createCustomer(@Valid @RequestBody CustomerRequestDTO customer) {
-        return ResponseEntity.ok(customerService.create(customer));
+        return ResponseEntity.status(HttpStatus.CREATED).body(customerService.create(customer));
     }
 
     @PutMapping("/{id}")

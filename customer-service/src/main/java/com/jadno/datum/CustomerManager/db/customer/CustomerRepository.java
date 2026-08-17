@@ -12,9 +12,9 @@ import java.util.Optional;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-    Optional<List<Customer>> findByName(String name);
+    Optional<Customer> findByCpf(String cpf);
 
-    Optional<List<Customer>> findByStatus(Status status);
+    Optional<Customer> findByEmail(String email);
 
     @Modifying
     @Transactional
