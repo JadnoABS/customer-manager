@@ -9,6 +9,7 @@ import com.jadno.datum.CustomerManager.dto.Status;
 import com.jadno.datum.CustomerManager.exception.CustomerNotFoundException;
 import com.jadno.datum.CustomerManager.exception.DAOException;
 import com.jadno.datum.CustomerManager.messaging.CustomerEventPublisher;
+import com.jadno.datum.CustomerManager.monitoring.MetricService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,9 @@ public class CustomerService {
     @Autowired
     private CustomerEventPublisher customerEventPublisher;
 
+    @Autowired
+    private MetricService metricService;
+
     public CustomerResponseDTO create(CustomerRequestDTO customer) {
         Customer newCustomer;
         try {
@@ -37,10 +41,12 @@ public class CustomerService {
                     .status(customer.getStatus())
                     .build());
         } catch (Exception e) {
-            throw new DAOException("Error on Customer entity creation!");
+            metricService.incrementCustomerCreateError();
+            throw new DAOException("Error on Customer creation! Email or Cpf may be already in use.");
         }
 
         customerEventPublisher.publishCustomerCreated(newCustomer.getCpf());
+        metricService.incrementCustomerCreateSuccess();
 
         return toCustomerDTO(newCustomer);
     }
