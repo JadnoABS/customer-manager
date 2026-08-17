@@ -1,7 +1,6 @@
-package com.jadno.datum.ScoreService.config;
+package com.jadno.datum.ScoreService.messaging;
 
 import tools.jackson.databind.json.JsonMapper;
-import com.jadno.datum.ScoreService.messaging.RabbitMQConstants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;

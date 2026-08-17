@@ -1,6 +1,5 @@
 package com.jadno.datum.CustomerManager.messaging;
 
-import com.jadno.datum.CustomerManager.messaging.event.CustomerCreatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -18,7 +17,7 @@ public class CustomerEventPublisher {
     }
 
     public void publishCustomerCreated(String cpf) {
-        CustomerCreatedEvent event = CustomerCreatedEvent.of(cpf);
+        CustomerEvent event = CustomerEvent.of(cpf);
 
         rabbitTemplate.convertAndSend(
                 RabbitMQConstants.CUSTOMER_EVENTS_EXCHANGE,

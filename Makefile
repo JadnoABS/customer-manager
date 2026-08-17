@@ -41,10 +41,10 @@ logs:
 	$(COMPOSE) logs -f
 
 logs-customer:
-	$(COMPOSE) logs -f customer-service prometheus rabbitmq
+	$(COMPOSE) logs -f customer-service prometheus rabbitmq redis
 
 logs-score:
-	$(COMPOSE) logs -f score-service redis rabbitmq
+	$(COMPOSE) logs -f score-service rabbitmq
 
 clean:
 	$(COMPOSE) down -v --remove-orphans

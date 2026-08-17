@@ -27,6 +27,14 @@ public class Customer {
     protected Customer() {
     }
 
+    public Customer(Long id, String name, String cpf, String email, Status status) {
+        this.id = id;
+        this.name = name;
+        this.cpf = cpf;
+        this.email = email;
+        this.status = status;
+    }
+
     public Customer(String name, String cpf, String email, Status status) {
         this.name = name;
         this.cpf = cpf;

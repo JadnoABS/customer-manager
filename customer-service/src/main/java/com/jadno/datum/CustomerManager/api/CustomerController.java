@@ -1,6 +1,6 @@
 package com.jadno.datum.CustomerManager.api;
 
-import com.jadno.datum.CustomerManager.client.dto.CustomerScoreDTO;
+import com.jadno.datum.CustomerManager.dto.CustomerScoreDTO;
 import com.jadno.datum.CustomerManager.domain.CustomerService;
 import com.jadno.datum.CustomerManager.domain.ScoreService;
 import com.jadno.datum.CustomerManager.dto.CustomerRequestDTO;
@@ -52,13 +52,7 @@ public class CustomerController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "status", required = false) Status status
     ) {
-        if(name != null && !name.isEmpty()) {
-            return ResponseEntity.ok(customerService.getAllWithName(name));
-        }
-        if(status != null) {
-            return ResponseEntity.ok(customerService.getAllWithStatus(status));
-        }
-        return ResponseEntity.ok(customerService.getAll());
+        return ResponseEntity.ok(customerService.getAll(name, status));
     }
 
     @GetMapping("/{id}/score")

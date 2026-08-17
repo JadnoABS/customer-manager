@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = CPFValidator.class)
 public @interface CPF {
 
-    String message() default "CPF inválido";
+    String message() default "Invalid CPF!";
 
     Class<?>[] groups() default {};
 

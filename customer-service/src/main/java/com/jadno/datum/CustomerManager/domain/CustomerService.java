@@ -1,5 +1,6 @@
 package com.jadno.datum.CustomerManager.domain;
 
+import com.jadno.datum.CustomerManager.db.customer.CustomerJdbcRepository;
 import com.jadno.datum.CustomerManager.dto.CustomerRequestDTO;
 import com.jadno.datum.CustomerManager.dto.CustomerResponseDTO;
 import com.jadno.datum.CustomerManager.db.customer.Customer;
@@ -19,6 +20,9 @@ public class CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private CustomerJdbcRepository customerJdbcRepository;
 
     @Autowired
     private CustomerEventPublisher customerEventPublisher;
@@ -45,12 +49,14 @@ public class CustomerService {
         int rowsAffected = customerRepository.updateById(customerId, customer.getName(),
                 customer.getCpf(), customer.getEmail(), customer.getStatus().name());
 
-        if(rowsAffected == 0) {
+        if (rowsAffected == 0) {
             throw new CustomerNotFoundException("Customer with id: " + customerId + " not found!");
         }
 
         Customer updatedCustomer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer with id: " + customerId + " not found!"));
+
+        customerEventPublisher.publishCustomerCreated(updatedCustomer.getCpf());
 
         return toCustomerDTO(updatedCustomer);
     }
@@ -64,19 +70,10 @@ public class CustomerService {
                 .orElseThrow(() -> new CustomerNotFoundException("Customer with id: " + customerId + " not found!")));
     }
 
-    public List<CustomerResponseDTO> getAll() {
-        return customerRepository.findAll().stream()
-                .map((customer) -> toCustomerDTO(customer)).toList();
-    }
-
-    public List<CustomerResponseDTO> getAllWithName(String name) {
-        return customerRepository.findByName(name).orElse(new ArrayList<>()).stream()
-                .map((customer -> toCustomerDTO(customer))).toList();
-    }
-
-    public List<CustomerResponseDTO> getAllWithStatus(Status status) {
-        return customerRepository.findByStatus(status).orElse(new ArrayList<>()).stream()
-                .map((customer -> toCustomerDTO(customer))).toList();
+    public List<CustomerResponseDTO> getAll(String name, Status status) {
+        return customerJdbcRepository.search(name, status).stream()
+                .map(this::toCustomerDTO)
+                .toList();
     }
 
     private CustomerResponseDTO toCustomerDTO(Customer customer) {

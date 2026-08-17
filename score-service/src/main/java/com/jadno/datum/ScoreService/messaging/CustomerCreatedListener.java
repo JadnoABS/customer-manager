@@ -16,8 +16,8 @@ public class CustomerCreatedListener {
     private static final Logger log = LoggerFactory.getLogger(CustomerCreatedListener.class);
 
     @RabbitListener(queues = RabbitMQConstants.QUEUE_CUSTOMER_CREATED)
-    public void onCustomerCreated(CustomerCreatedEvent event) {
-        log.info("Evento customer.created recebido para CPF {}", event.cpf());
+    public void onCustomerCreated(CustomerEvent event) {
+        log.info("Received customer.created event for CPF {}", event.cpf());
         scoreService.createScore(event.cpf());
     }
 }

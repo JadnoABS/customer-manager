@@ -1,7 +1,6 @@
 package com.jadno.datum.ScoreService.api;
 
 import com.jadno.datum.ScoreService.domain.ScoreService;
-import com.jadno.datum.ScoreService.dto.Classification;
 import com.jadno.datum.ScoreService.dto.ScoreDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

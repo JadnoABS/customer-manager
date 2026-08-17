@@ -1,6 +1,5 @@
 services:
 
-  # ---------- Customer Service ----------
   customer-service:
     build:
       context: ./customer-service
@@ -10,6 +9,8 @@ services:
       - "8080:8080"
     environment:
       SCORE_SERVICE_BASE_URL: http://score-service:8081
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
@@ -19,6 +20,7 @@ services:
     networks:
       - public-net
       - backend-net
+      - cache-net
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -30,7 +32,6 @@ services:
       start_period: 30s
     restart: unless-stopped
 
-  # ---------- Score Service (fechado: sem porta publicada, só acessível via backend-net/cache-net) ----------
   score-service:
     build:
       context: ./score-service
@@ -38,15 +39,12 @@ services:
     container_name: score-service
     environment:
       SERVER_PORT: 8081
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
     networks:
       - backend-net
-      - cache-net
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -60,12 +58,11 @@ services:
       start_period: 30s
     restart: unless-stopped
 
-  # ---------- RabbitMQ ----------
   rabbitmq:
     image: rabbitmq:3.13-management
     container_name: rabbitmq
     ports:
-      - "15672:15672" # UI de administração (dev only — remova em produção se não precisar)
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -79,7 +76,6 @@ services:
       start_period: 20s
     restart: unless-stopped
 
-  # ---------- Redis (só o score-service enxerga) ----------
   redis:
     image: redis:7-alpine
     container_name: redis
@@ -92,7 +88,6 @@ services:
       retries: 5
     restart: unless-stopped
 
-  # ---------- Prometheus ----------
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -111,7 +106,7 @@ networks:
     driver: bridge
   backend-net:
     driver: bridge
-    internal: false # AMQP/HTTP interno entre as duas apps + rabbitmq
+    internal: false
   cache-net:
     driver: bridge
-    internal: true  # sem saída para fora do host — reforça o isolamento do redis
+    internal: true

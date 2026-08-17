@@ -6,7 +6,6 @@ spring:
     exclude:
       - org.springframework.boot.micrometer.metrics.autoconfigure.system.SystemMetricsAutoConfiguration
 
-  # ---------- H2 / JPA ----------
   datasource:
     url: jdbc:h2:mem:customerdb;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
@@ -22,31 +21,30 @@ spring:
       enabled: true
       path: /h2-console
 
-  # ---------- Messageria -----------
   rabbitmq:
     host: ${SPRING_RABBITMQ_HOST}
     port: ${SPRING_RABBITMQ_PORT}
     username: ${SPRING_RABBITMQ_USERNAME}
     password: ${SPRING_RABBITMQ_PASSWORD}
 
-  # Timeouts aplicados ao RestClient.Builder auto-configurado (starter spring-boot-starter-restclient)
+  redis:
+    host: ${SPRING_REDIS_HOST}
+    port: ${SPRING_REDIS_PORT}
+
   http:
     client:
       connect-timeout: 5s
       read-timeout: 10s
 
-  # -------------- Credenciais de Perfil --------------
 profiles:
   admin:
     password: ${ADMIN_PASSWORD}
   user:
     password: ${USER_PASSWORD}
 
-# ---------- Cliente da API externa ----------
 score-api:
   base-url: ${SCORE_SERVICE_BASE_URL}
 
-# ---------- Actuator / Prometheus ----------
 management:
   endpoints:
     web:

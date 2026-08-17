@@ -1,4 +1,4 @@
-package com.jadno.datum.CustomerManager.client.dto;
+package com.jadno.datum.CustomerManager.dto;
 
 public record CustomerScoreDTO(
         String cpf,
