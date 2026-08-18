@@ -74,7 +74,7 @@ class ScoreServiceTest {
         assertEquals(CPF, savedScore.getCpf());
         assertNotNull(savedScore.getScore());
         assertTrue(savedScore.getScore() >= 0 && savedScore.getScore() <= 1000);
-        assertNotNull(savedScore.getClassification());
+        assertEquals(Classification.forScore(savedScore.getScore()), savedScore.getClassification());
     }
 
     @Test

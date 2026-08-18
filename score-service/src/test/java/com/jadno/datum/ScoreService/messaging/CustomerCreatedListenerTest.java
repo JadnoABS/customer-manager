@@ -29,8 +29,8 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CustomerCreatedListenerIT.TestConfig.class })
-public class CustomerCreatedListenerIT {
+@ContextConfiguration(classes = { CustomerCreatedListenerTest.TestConfig.class })
+public class CustomerCreatedListenerTest {
 
     @ClassRule
     public static DockerComposeContainer<?> environment =
